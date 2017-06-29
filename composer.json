@@ -1,0 +1,17 @@
+{
+  "name": "okeyaki/pimple-di",
+  "type": "library",
+  "description": "Integrates DI functionality with Pimple.",
+  "license": "MIT",
+  "require": {
+    "pimple/pimple": "^2.0|^3.0"
+  },
+  "require-dev": {
+    "symfony/phpunit-bridge": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "Okeyaki\\Pimple\\": "src"
+    }
+  }
+}
