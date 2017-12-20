@@ -69,6 +69,43 @@ trait DiTrait
      */
     public function make($class, array $params = [])
     {
+        $real = isset($this->bound[$class]) ? $this->bound[$class] : $class;
+
+        return $this->instantiate($real, $params);
+    }
+
+    /**
+     * @param string $id
+     *
+     * @return mixed
+     */
+    protected function resolve($id)
+    {
+        if (!isset($this->resolved[$id])) {
+            $real = isset($this->bound[$id]) ? $this->bound[$id] : $id;
+
+            if (parent::offsetExists($real)) {
+                return parent::offsetGet($real);
+            }
+
+            if (!class_exists($real)) {
+                return null;
+            }
+
+            $this->resolved[$id] = $this->instantiate($real);
+        }
+
+        return $this->resolved[$id];
+    }
+
+    /**
+     * @param string $class
+     * @param array  $params
+     *
+     * @return mixed
+     */
+    protected function instantiate($class, array $params = [])
+    {
         $rClass = new \ReflectionClass($class);
 
         $rConstructor = $rClass->getConstructor();
@@ -97,29 +134,5 @@ trait DiTrait
             },
             $rConstructor->getParameters()
         ));
-    }
-
-    /**
-     * @param string $id
-     *
-     * @return mixed
-     */
-    protected function resolve($id)
-    {
-        if (!isset($this->resolved[$id])) {
-            $real = isset($this->bound[$id]) ? $this->bound[$id] : $id;
-
-            if (parent::offsetExists($real)) {
-                return parent::offsetGet($real);
-            }
-
-            if (!class_exists($real)) {
-                return null;
-            }
-
-            $this->resolved[$id] = $this->make($real);
-        }
-
-        return $this->resolved[$id];
     }
 }
